@@ -61,6 +61,52 @@ head(variables_seleccionadas)
 ```{r echo=FALSE}
 ```
 # Distribución del total de ventas o ingresos.
+```{r echo=FALSE}
+# Definir la función para graficar la distribución
+graficar_distribucion <- function(datos, titulo) {
+  # Crear el histograma
+  hist(datos$P1010, prob = TRUE, main = titulo, xlab = "Ventas o ingresos", col = "lightblue", breaks = 30)
+  
+  # Añadir la curva de densidad
+  lines(density(datos$P1010, na.rm = TRUE), col = "red", lwd = 2)
+  
+  # Añadir la curva de distribución normal
+  media <- mean(datos$P1010, na.rm = TRUE)
+  sd <- sd(datos$P1010, na.rm = TRUE)
+  curve(dnorm(x, mean = media, sd = sd), add = TRUE, col = "blue", lwd = 2)
+}
+
+# Filtrar los datos para ventas menores a 100 millones
+datos_filtrados <- variables_seleccionadas[variables_seleccionadas$P1010 < 100000000, ]
+
+# Verificar si los datos filtrados tienen alguna fila
+if (nrow(datos_filtrados) > 0) {
+  
+  # Filtrar los que NO tienen página web
+  sin_web <- datos_filtrados[datos_filtrados$P2532 == 0, ]
+  
+  # Filtrar los que SÍ tienen página web
+  con_web <- datos_filtrados[datos_filtrados$P2532 == 1, ]
+  
+  # Verificar si el subconjunto sin_web tiene datos y no está vacío
+  if (nrow(sin_web) > 0 && sum(!is.na(sin_web$P1010)) > 0) {
+    graficar_distribucion(sin_web, "Distribución de Ventas (Sin Página Web)")
+  } else {
+    print("No hay datos suficientes para los establecimientos sin página web.")
+  }
+  
+  # Verificar si el subconjunto con_web tiene datos y no está vacío
+  if (nrow(con_web) > 0 && sum(!is.na(con_web$P1010)) > 0) {
+    graficar_distribucion(con_web, "Distribución de Ventas (Con Página Web)")
+  } else {
+    print("No hay datos suficientes para los establecimientos con página web.")
+  }
+  
+} else {
+  print("No hay datos suficientes después del filtrado.")
+}
+
+```
 
 # Estimaciones.
 
