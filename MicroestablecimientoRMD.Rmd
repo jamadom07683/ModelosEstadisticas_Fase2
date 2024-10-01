@@ -180,6 +180,9 @@ cat("Intervalo de confianza para el promedio de ventas (95%): [", limite_inferio
 
 print("Proporción de microestablecimientos que cuentan con página web")
 
+# Convertir la columna P2532 a 0 y 1 si no está ya en ese formato
+variables_seleccionadas$P2532 <- as.numeric(variables_seleccionadas$P2532 == 1)
+
 # Remover valores NA para la columna P2532
 pagina_web <- na.omit(variables_seleccionadas$P2532)
 
@@ -189,18 +192,29 @@ proporcion_web <- mean(pagina_web)
 # Tamaño de la muestra
 n_web <- length(pagina_web)
 
-# Error estándar de la proporción
-error_estandar_web <- sqrt(proporcion_web * (1 - proporcion_web) / n_web)
-
-# Intervalo de confianza del 95% para la proporción
-error_margen_web <- qnorm(0.975) * error_estandar_web
-
-# Intervalo de confianza
-limite_inferior_web <- proporcion_web - error_margen_web
-limite_superior_web <- proporcion_web + error_margen_web
+# Comprobar si la proporción es 0 o 1 para evitar errores
+if (proporcion_web == 0) {
+  limite_inferior_web <- 0
+  limite_superior_web <- 0
+} else if (proporcion_web == 1) {
+  limite_inferior_web <- 1
+  limite_superior_web <- 1
+} else {
+  # Error estándar de la proporción
+  error_estandar_web <- sqrt(proporcion_web * (1 - proporcion_web) / n_web)
+  
+  # Intervalo de confianza del 95% para la proporción
+  error_margen_web <- qnorm(0.975) * error_estandar_web
+  
+  # Intervalo de confianza
+  limite_inferior_web <- proporcion_web - error_margen_web
+  limite_superior_web <- proporcion_web + error_margen_web
+}
 
 # Mostrar el intervalo de confianza
 cat("Intervalo de confianza para la proporción de establecimientos con página web (95%): [", limite_inferior_web, ", ", limite_superior_web, "]\n")
+
+
 
 print("Estimación del número de computadores de escritorio")
 
