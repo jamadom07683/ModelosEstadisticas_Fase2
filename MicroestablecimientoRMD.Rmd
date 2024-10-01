@@ -59,64 +59,6 @@ head(variables_seleccionadas)
 
 # Análisis descriptivo.
 ```{r echo=FALSE}
-# Función para convertir a numérico y reemplazar NA por la mediana
-convertir_a_numerico_y_reemplazar_na <- function(columna) {
-  columna <- as.numeric(as.character(columna))  # Convertir a numérico
-  if (any(is.na(columna))) {
-    columna[is.na(columna)] <- median(columna, na.rm = TRUE)  # Reemplazar NA por la mediana
-  }
-  return(columna)
-}
-
-# Aplicar la función a las columnas seleccionadas
-variables_seleccionadas$P1010 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P1010)
-variables_seleccionadas$P2532 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P2532)
-variables_seleccionadas$P1057 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P1057)
-variables_seleccionadas$P1092 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P1092)
-variables_seleccionadas$P2524 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P2524)
-variables_seleccionadas$P1093 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P1093)
-variables_seleccionadas$P1006 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P1006)
-variables_seleccionadas$P1764 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P1764)
-variables_seleccionadas$P3014 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P3014)
-variables_seleccionadas$P3019 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P3019)
-variables_seleccionadas$P1094 <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P1094)
-variables_seleccionadas$P3017_A <- convertir_a_numerico_y_reemplazar_na(variables_seleccionadas$P3017_A)
-# Generar el histograma de P1010 (Ventas o ingresos)
-hist(variables_seleccionadas$P1010, main = "Distribución de los Ingresos (P1010)", xlab = "Ingresos", col = "skyblue")
-
-# Gráfico de barras de la existencia de página web
-barplot(table(variables_seleccionadas$P2532), main = "Existencia de Página Web (P2532)", col = c("orange", "blue"), names.arg = c("No", "Sí"))
-
-# Resumen de empleados
-summary(variables_seleccionadas$P1057)
-
-# Gráfico de barras de registro de establecimiento
-barplot(table(variables_seleccionadas$P1092), main = "Registro del Establecimiento (P1092)", col = c("lightgreen", "red"))
-
-# Gráfico circular de sector económico
-pie(table(variables_seleccionadas$P2524), main = "Distribución por Sector Económico (P2524)")
-
-# Gráfico de barras de estructura organizativa
-barplot(table(variables_seleccionadas$P1093), main = "Estructura Organizativa (P1093)", col = "purple")
-
-# Histograma de inversión en activos
-hist(variables_seleccionadas$P1006, main = "Inversión en Activos (P1006)", xlab = "Inversión", col = "green")
-
-# Boxplot de facturación u otros ingresos
-boxplot(variables_seleccionadas$P1764, main = "Facturación u Otros Ingresos (P1764)", col = "pink")
-
-# Gráfico de barras de evolución del establecimiento
-barplot(table(variables_seleccionadas$P3014), main = "Evolución del Establecimiento (P3014)", col = "yellow")
-
-# Gráfico de barras de características de los clientes
-barplot(table(variables_seleccionadas$P3019), main = "Características del Mercado (P3019)", col = "cyan")
-
-# Histograma de gastos operativos
-hist(variables_seleccionadas$P1094, main = "Gastos Operativos (P1094)", xlab = "Gastos", col = "lightblue")
-
-# Gráfico de barras de actividad económica específica
-barplot(table(variables_seleccionadas$P3017_A), main = "Actividad Económica Específica (P3017_A)", col = "orange")
-
 ```
 # Distribución del total de ventas o ingresos.
 
