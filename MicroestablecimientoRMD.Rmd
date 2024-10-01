@@ -56,6 +56,33 @@ variables_seleccionadas <- establecimientos[, c("P1010", "P2532", "P1057", "P109
 head(variables_seleccionadas)
 
 ```
+#Justificacion de Variables
+
+Hemos seleccionado 12 variables clave para realizar el análisis de los microestablecimientos, ya que consideramos que nos ofrecen una visión completa de su desempeño económico, tecnológico y organizativo. A continuación, describimos brevemente cada una de ellas y explicamos por qué las hemos elegido.
+
+Ventas o ingresos en los últimos 12 meses (P1010): Esta variable es fundamental para medir el desempeño financiero de los microestablecimientos, ya que refleja el valor total de las ventas o ingresos que han tenido en el último año.
+
+Existencia de página web (P2532): Nos permite evaluar el nivel de adopción tecnológica en los establecimientos. Consideramos que contar con una página web puede ser un factor clave en la modernización y visibilidad del negocio.
+
+Número de empleados (P1057): Esta variable es importante porque nos indica la capacidad laboral del establecimiento, lo que puede estar relacionado con su tamaño y capacidad operativa.
+
+Registro del establecimiento (P1092): El grado de formalización es un aspecto crítico para entender si los microestablecimientos operan dentro del marco legal, lo cual influye en su acceso a financiamiento y otros beneficios.
+
+Sector económico (P2524): Nos ayuda a clasificar los establecimientos dentro de un sector económico específico, permitiendo hacer análisis más detallados por industria y comprender mejor el contexto en el que operan.
+
+Estructura organizativa (P1093): Esta variable nos da información sobre la forma legal o estructura del negocio (si es unipersonal, cooperativa, sociedad, etc.), lo que influye directamente en su capacidad de crecimiento y acceso a recursos.
+
+Inversión en activos (P1006): Consideramos que es relevante saber cuánto invierten los establecimientos en infraestructura y tecnología, ya que esto puede estar vinculado a su capacidad de expandirse y mejorar sus procesos productivos.
+
+Facturación u otros ingresos (P1764): Además de las ventas directas, es útil conocer si el establecimiento genera otros tipos de ingresos, lo que puede proporcionar una imagen más completa de sus finanzas.
+
+Evolución del establecimiento (P3014): Esta variable nos permite ver cómo ha cambiado el establecimiento en los últimos años, lo que es crucial para identificar tendencias de crecimiento o declive.
+
+Características del mercado o clientes (P3019): Saber a qué tipo de clientes o mercados están orientados los microestablecimientos nos ofrece información valiosa sobre sus estrategias comerciales y su posicionamiento en el mercado.
+
+Gastos operativos (P1094): Este dato es esencial para entender cómo manejan los microestablecimientos sus costos diarios, lo cual tiene un impacto directo en su rentabilidad y sostenibilidad.
+
+Actividad económica específica (P3017_A): Nos permite clasificar los establecimientos según su actividad principal, lo que facilita realizar un análisis más profundo por sectores y entender mejor las particularidades de cada uno.
 
 # Análisis descriptivo.
 ```{r echo=FALSE}
@@ -109,6 +136,101 @@ if (nrow(datos_filtrados) > 0) {
 ```
 
 # Estimaciones.
+```{r echo=FALSE}
+print("Valor total de ventas o ingresos promedio en los últimos 12 meses")
+
+# Remover los valores NA para la columna P1010
+ventas <- na.omit(variables_seleccionadas$P1010)
+
+# Cálculo del promedio y desviación estándar
+promedio_ventas <- mean(ventas)
+desviacion_ventas <- sd(ventas)
+
+# Tamaño de la muestra
+n_ventas <- length(ventas)
+
+# Error estándar del promedio
+error_estandar_ventas <- desviacion_ventas / sqrt(n_ventas)
+error_margen_ventas <- qnorm(0.975) * error_estandar_ventas
+
+# Intervalo de confianza
+limite_inferior_ventas <- promedio_ventas - error_margen_ventas
+limite_superior_ventas <- promedio_ventas + error_margen_ventas
+
+# Mostrar el intervalo de confianza
+cat("Intervalo de confianza para el promedio de ventas (95%): [", limite_inferior_ventas, ", ", limite_superior_ventas, "]\n")
+
+print("Proporción de microestablecimientos que cuentan con página web")
+
+# Remover valores NA para la columna P2532
+pagina_web <- na.omit(variables_seleccionadas$P2532)
+
+# Cálculo de la proporción de establecimientos con página web
+proporcion_web <- mean(pagina_web)
+
+# Tamaño de la muestra
+n_web <- length(pagina_web)
+
+# Error estándar de la proporción
+error_estandar_web <- sqrt(proporcion_web * (1 - proporcion_web) / n_web)
+
+# Intervalo de confianza del 95% para la proporción
+error_margen_web <- qnorm(0.975) * error_estandar_web
+
+# Intervalo de confianza
+limite_inferior_web <- proporcion_web - error_margen_web
+limite_superior_web <- proporcion_web + error_margen_web
+
+# Mostrar el intervalo de confianza
+cat("Intervalo de confianza para la proporción de establecimientos con página web (95%): [", limite_inferior_web, ", ", limite_superior_web, "]\n")
+
+print("Estimación del número promedio de empleados")
+
+# Remover valores NA para la columna P1057
+empleados <- na.omit(variables_seleccionadas$P1057)
+
+# Cálculo del promedio y desviación estándar
+promedio_empleados <- mean(empleados)
+desviacion_empleados <- sd(empleados)
+
+# Tamaño de la muestra
+n_empleados <- length(empleados)
+
+# Error estándar del promedio
+error_estandar_empleados <- desviacion_empleados / sqrt(n_empleados)
+error_margen_empleados <- qnorm(0.975) * error_estandar_empleados
+
+# Intervalo de confianza
+limite_inferior_empleados <- promedio_empleados - error_margen_empleados
+limite_superior_empleados <- promedio_empleados + error_margen_empleados
+
+# Mostrar el intervalo de confianza
+cat("Intervalo de confianza para el promedio de empleados (95%): [", limite_inferior_empleados, ", ", limite_superior_empleados, "]\n")
+
+print("Estimación del gasto operativo promedio")
+
+# Remover valores NA para la columna P1094
+gastos_operativos <- na.omit(variables_seleccionadas$P1094)
+
+# Cálculo del promedio y desviación estándar
+promedio_gastos <- mean(gastos_operativos)
+desviacion_gastos <- sd(gastos_operativos)
+
+# Tamaño de la muestra
+n_gastos <- length(gastos_operativos)
+
+# Error estándar del promedio
+error_estandar_gastos <- desviacion_gastos / sqrt(n_gastos)
+error_margen_gastos <- qnorm(0.975) * error_estandar_gastos
+
+# Intervalo de confianza
+limite_inferior_gastos <- promedio_gastos - error_margen_gastos
+limite_superior_gastos <- promedio_gastos + error_margen_gastos
+
+# Mostrar el intervalo de confianza
+cat("Intervalo de confianza para el promedio de gastos operativos (95%): [", limite_inferior_gastos, ", ", limite_superior_gastos, "]\n")
+
+```
 
 # Estrategías.
 
