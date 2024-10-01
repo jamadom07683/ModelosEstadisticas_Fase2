@@ -49,8 +49,8 @@ El objetivo del análisis estadístico que presentamos en este informe es identi
 
 # Elección de variables.
 ```{r echo=FALSE}
-# Seleccionar las columnas relevantes incluyendo las nuevas sugerencias
-variables_seleccionadas <- establecimientos[, c("P1010", "P2532", "P1057", "P1092", "P2524", "P1093", "P1006", "P1764", "P3014", "P3019", "P1094", "P3017_A")]
+# Seleccionar las columnas relevantes, reemplazando P3019 por CDGO_DPRTMNTO
+variables_seleccionadas <- establecimientos[, c("P1010", "P2532", "P1087", "P1088", "P1057", "P1092", "P2524", "P1093", "P1006", "P1764", "P1094", "CDGO_DPRTMNTO")]
 
 # Ver las primeras filas para verificar la selección
 head(variables_seleccionadas)
@@ -58,31 +58,18 @@ head(variables_seleccionadas)
 ```
 #Justificacion de Variables
 
-Hemos seleccionado 12 variables clave para realizar el análisis de los microestablecimientos, ya que consideramos que nos ofrecen una visión completa de su desempeño económico, tecnológico y organizativo. A continuación, describimos brevemente cada una de ellas y explicamos por qué las hemos elegido.
+Hemos seleccionado estas 12 variables porque consideramos que nos ofrecen una visión integral del desempeño de los microestablecimientos en Colombia. A continuación, explicamos cada una y su relevancia en el análisis.
 
-Ventas o ingresos en los últimos 12 meses (P1010): Esta variable es fundamental para medir el desempeño financiero de los microestablecimientos, ya que refleja el valor total de las ventas o ingresos que han tenido en el último año.
-
-Existencia de página web (P2532): Nos permite evaluar el nivel de adopción tecnológica en los establecimientos. Consideramos que contar con una página web puede ser un factor clave en la modernización y visibilidad del negocio.
-
-Número de empleados (P1057): Esta variable es importante porque nos indica la capacidad laboral del establecimiento, lo que puede estar relacionado con su tamaño y capacidad operativa.
-
-Registro del establecimiento (P1092): El grado de formalización es un aspecto crítico para entender si los microestablecimientos operan dentro del marco legal, lo cual influye en su acceso a financiamiento y otros beneficios.
-
-Sector económico (P2524): Nos ayuda a clasificar los establecimientos dentro de un sector económico específico, permitiendo hacer análisis más detallados por industria y comprender mejor el contexto en el que operan.
-
-Estructura organizativa (P1093): Esta variable nos da información sobre la forma legal o estructura del negocio (si es unipersonal, cooperativa, sociedad, etc.), lo que influye directamente en su capacidad de crecimiento y acceso a recursos.
-
-Inversión en activos (P1006): Consideramos que es relevante saber cuánto invierten los establecimientos en infraestructura y tecnología, ya que esto puede estar vinculado a su capacidad de expandirse y mejorar sus procesos productivos.
-
-Facturación u otros ingresos (P1764): Además de las ventas directas, es útil conocer si el establecimiento genera otros tipos de ingresos, lo que puede proporcionar una imagen más completa de sus finanzas.
-
-Evolución del establecimiento (P3014): Esta variable nos permite ver cómo ha cambiado el establecimiento en los últimos años, lo que es crucial para identificar tendencias de crecimiento o declive.
-
-Características del mercado o clientes (P3019): Saber a qué tipo de clientes o mercados están orientados los microestablecimientos nos ofrece información valiosa sobre sus estrategias comerciales y su posicionamiento en el mercado.
-
-Gastos operativos (P1094): Este dato es esencial para entender cómo manejan los microestablecimientos sus costos diarios, lo cual tiene un impacto directo en su rentabilidad y sostenibilidad.
-
-Actividad económica específica (P3017_A): Nos permite clasificar los establecimientos según su actividad principal, lo que facilita realizar un análisis más profundo por sectores y entender mejor las particularidades de cada uno.
+P1010 (Ventas o ingresos en los últimos 12 meses): Es clave para medir el desempeño financiero de los establecimientos.
+P2532 (Página web): Evaluamos la adopción tecnológica, importante para la visibilidad y competitividad.
+P1087 (Computadores de escritorio) y P1088 (Computadores portátiles): Reflejan el nivel tecnológico disponible.
+P1057 (Mes de referencia): Nos ayuda a contextualizar los datos financieros.
+P1092 (Dispositivos PDA/DMC): Mide el uso de dispositivos tecnológicos avanzados.
+P2524 (Acceso a Internet): Fundamental para analizar la modernización del negocio.
+P1093 (Uso de Internet dentro del establecimiento) y P1094 (Uso fuera del establecimiento): Permiten evaluar la conectividad y productividad.
+P1006 (Uso de Internet en actividades clave): Nos permite conocer cómo la tecnología se integra en las operaciones diarias.
+P1764 (Formas de pago): Es crucial para analizar la capacidad del establecimiento de gestionar transacciones modernas.
+CDGO_DPRTMNTO (Código de departamento): Ayuda a contextualizar geográficamente los establecimientos, permitiendo análisis regionales (Por ejemplo el costo de la energia electrica)
 
 # Análisis descriptivo.
 ```{r echo=FALSE}
@@ -132,13 +119,10 @@ if (nrow(datos_filtrados) > 0) {
 } else {
   print("No hay datos suficientes después del filtrado.")
 }
-
 ```
 
 # Estimaciones.
 ```{r echo=FALSE}
-print("Valor total de ventas o ingresos promedio en los últimos 12 meses")
-
 # Remover los valores NA para la columna P1010
 ventas <- na.omit(variables_seleccionadas$P1010)
 
@@ -184,51 +168,51 @@ limite_superior_web <- proporcion_web + error_margen_web
 # Mostrar el intervalo de confianza
 cat("Intervalo de confianza para la proporción de establecimientos con página web (95%): [", limite_inferior_web, ", ", limite_superior_web, "]\n")
 
-print("Estimación del número promedio de empleados")
+print("Estimación del número de computadores de escritorio")
 
-# Remover valores NA para la columna P1057
-empleados <- na.omit(variables_seleccionadas$P1057)
-
-# Cálculo del promedio y desviación estándar
-promedio_empleados <- mean(empleados)
-desviacion_empleados <- sd(empleados)
-
-# Tamaño de la muestra
-n_empleados <- length(empleados)
-
-# Error estándar del promedio
-error_estandar_empleados <- desviacion_empleados / sqrt(n_empleados)
-error_margen_empleados <- qnorm(0.975) * error_estandar_empleados
-
-# Intervalo de confianza
-limite_inferior_empleados <- promedio_empleados - error_margen_empleados
-limite_superior_empleados <- promedio_empleados + error_margen_empleados
-
-# Mostrar el intervalo de confianza
-cat("Intervalo de confianza para el promedio de empleados (95%): [", limite_inferior_empleados, ", ", limite_superior_empleados, "]\n")
-
-print("Estimación del gasto operativo promedio")
-
-# Remover valores NA para la columna P1094
-gastos_operativos <- na.omit(variables_seleccionadas$P1094)
+# Remover valores NA para la columna P1087
+computadores_escritorio <- na.omit(variables_seleccionadas$P1087)
 
 # Cálculo del promedio y desviación estándar
-promedio_gastos <- mean(gastos_operativos)
-desviacion_gastos <- sd(gastos_operativos)
+promedio_computadores_escritorio <- mean(computadores_escritorio)
+desviacion_computadores_escritorio <- sd(computadores_escritorio)
 
 # Tamaño de la muestra
-n_gastos <- length(gastos_operativos)
+n_computadores_escritorio <- length(computadores_escritorio)
 
 # Error estándar del promedio
-error_estandar_gastos <- desviacion_gastos / sqrt(n_gastos)
-error_margen_gastos <- qnorm(0.975) * error_estandar_gastos
+error_estandar_computadores_escritorio <- desviacion_computadores_escritorio / sqrt(n_computadores_escritorio)
+error_margen_computadores_escritorio <- qnorm(0.975) * error_estandar_computadores_escritorio
 
 # Intervalo de confianza
-limite_inferior_gastos <- promedio_gastos - error_margen_gastos
-limite_superior_gastos <- promedio_gastos + error_margen_gastos
+limite_inferior_computadores_escritorio <- promedio_computadores_escritorio - error_margen_computadores_escritorio
+limite_superior_computadores_escritorio <- promedio_computadores_escritorio + error_margen_computadores_escritorio
 
 # Mostrar el intervalo de confianza
-cat("Intervalo de confianza para el promedio de gastos operativos (95%): [", limite_inferior_gastos, ", ", limite_superior_gastos, "]\n")
+cat("Intervalo de confianza para el número de computadores de escritorio (95%): [", limite_inferior_computadores_escritorio, ", ", limite_superior_computadores_escritorio, "]\n")
+
+print("Estimación del número de computadores portátiles")
+
+# Remover valores NA para la columna P1088
+computadores_portatiles <- na.omit(variables_seleccionadas$P1088)
+
+# Cálculo del promedio y desviación estándar
+promedio_computadores_portatiles <- mean(computadores_portatiles)
+desviacion_computadores_portatiles <- sd(computadores_portatiles)
+
+# Tamaño de la muestra
+n_computadores_portatiles <- length(computadores_portatiles)
+
+# Error estándar del promedio
+error_estandar_computadores_portatiles <- desviacion_computadores_portatiles / sqrt(n_computadores_portatiles)
+error_margen_computadores_portatiles <- qnorm(0.975) * error_estandar_computadores_portatiles
+
+# Intervalo de confianza
+limite_inferior_computadores_portatiles <- promedio_computadores_portatiles - error_margen_computadores_portatiles
+limite_superior_computadores_portatiles <- promedio_computadores_portatiles + error_margen_computadores_portatiles
+
+# Mostrar el intervalo de confianza
+cat("Intervalo de confianza para el número de computadores portátiles (95%): [", limite_inferior_computadores_portatiles, ", ", limite_superior_computadores_portatiles, "]\n")
 
 ```
 
