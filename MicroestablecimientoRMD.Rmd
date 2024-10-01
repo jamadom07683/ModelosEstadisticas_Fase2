@@ -52,8 +52,27 @@ El objetivo del análisis estadístico que presentamos en este informe es identi
 # Seleccionar las columnas relevantes, reemplazando P3019 por CDGO_DPRTMNTO
 variables_seleccionadas <- establecimientos[, c("P1010", "P2532", "P1087", "P1088", "P1057", "P1092", "P2524", "P1093", "P1006", "P1764", "P1094", "CDGO_DPRTMNTO")]
 
-# Ver las primeras filas para verificar la selección
-head(variables_seleccionadas)
+# Crear un dataframe con las variables seleccionadas y sus descripciones
+tabla_variables <- data.frame(
+  "Código DANE" = c("P1010", "P2532", "P1087", "P1088", "P1057", "P1092", "P2524", "P1093", "P1006", "P1764", "P1094", "CDGO_DPRTMNTO"),
+  "Descripción" = c(
+    "Valor total de ventas o ingresos en los últimos 12 meses",
+    "El establecimiento tiene página web",
+    "Número de computadores de escritorio en uso",
+    "Número de computadores portátiles en uso",
+    "Mes al que corresponde el valor reportado",
+    "Dispositivos PDA/DMC en uso en el establecimiento",
+    "Acceso o uso del servicio de Internet en el establecimiento",
+    "Uso de Internet dentro del establecimiento",
+    "Actividades en las que el establecimiento utiliza Internet",
+    "Formas de pago que acepta el establecimiento",
+    "Uso de Internet fuera del establecimiento",
+    "Código de departamento del establecimiento"
+  )
+)
+
+# Mostrar la tabla
+print(tabla_variables)
 
 ```
 #Justificacion de Variables
