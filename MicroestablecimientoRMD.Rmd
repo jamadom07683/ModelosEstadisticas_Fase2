@@ -251,101 +251,80 @@ variables_seleccionadas$P2532 <- factor(variables_seleccionadas$P2532, levels = 
 
 ```
 
-# Estrategías.
+# Estrategias
 
-## Calcular el intervalo de confianza para el valor total de ventas o ingresos (P1010)
+Desarrollar una estrategia basada en el análisis de las variables seleccionadas nos permite enfocarnos en varios aspectos clave que ayudarán a mejorar el desempeño de los microestablecimientos en Colombia, como los siguientes:
+
+Estrategia 1: Mejorar la Adopción Tecnológica
+Fomentar la creación y mantenimiento de páginas web para los establecimientos que aún no tienen una. Esto puede aumentar la visibilidad y atraer a más clientes. También se puede promover el uso de Internet tanto dentro como fuera del establecimiento para mejorar la eficiencia operativa y la conectividad.
+
+Estrategia 2: Optimización de Recursos Tecnológicos
+Evaluar la necesidad de actualizar o incrementar el número de computadores para mejorar la productividad. Incentivar el uso de dispositivos avanzados para tareas específicas que puedan beneficiarse al tener nuevas tecnologías.
+
+Estrategia 3: Análisis Financiero y de Ventas
+Realizar un seguimiento constante de las ventas para identificar tendencias y áreas de mejora. Implementar estrategias de marketing y ventas basadas en estos datos. Utilizar esta información para ajustar estrategias de ventas y marketing según las variaciones estacionales o mensuales, considerando los efectos en proveedores y personal, para tomar decisiones basadas en los datos.
+
+Estrategia 4: Formas de Pago
+Diversificar las formas de pago aceptadas para facilitar las transacciones y atraer a más clientes. Incluir opciones modernas como pagos móviles y billeteras digitales.
+
+Estrategia 5: Análisis Regional
+Realizar análisis regionales para identificar las necesidades específicas de cada área y adaptar las estrategias en consecuencia. Por ejemplo, en regiones con altos costos de energía, se pueden buscar alternativas más eficientes o sostenibles.
+
+Estrategia 6: Capacitación y Educación
+Es crucial mantenerse en constante capacitación dentro del nicho correspondiente para ofrecer mejores servicios y productos, alineados con la fuente de comercio del microestablecimiento. La capacitación debe incluir tanto el enfoque específico del establecimiento como conocimientos financieros y de optimización de recursos.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
-# Filtrar datos válidos para P1010 (ventas)
+# Calcular el intervalo de confianza para el valor total de ventas o ingresos (P1010)
+cat("\n## Calcular el intervalo de confianza para el valor total de ventas o ingresos (P1010)\n")
 ventas_validas <- datos_microestablecimientos %>% filter(!is.na(P1010))
-
-# Calcular media, desviación estándar y tamaño de muestra
 media_ventas <- mean(ventas_validas$P1010)
 sd_ventas <- sd(ventas_validas$P1010)
 n_ventas <- nrow(ventas_validas)
-
-# Calcular error estándar
 error_estandar_ventas <- sd_ventas / sqrt(n_ventas)
-
-# Calcular el intervalo de confianza (IC) al 95%
-z_score <- qnorm(0.975)  # Valor Z para un IC del 95%
+z_score <- qnorm(0.975)
 limite_inferior_ventas <- media_ventas - z_score * error_estandar_ventas
 limite_superior_ventas <- media_ventas + z_score * error_estandar_ventas
-
-# Imprimir los resultados
 cat("Intervalo de confianza al 95% para el valor total de ventas promedio:\n")
 cat("Media:", media_ventas, "\n")
 cat("IC:", limite_inferior_ventas, "-", limite_superior_ventas, "\n")
 
-```
-## Calcular el intervalo de confianza para la proporción de microestablecimientos que cuentan con página web (P2532)
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-
-# Filtrar datos válidos para P2532 (página web)
+# Calcular el intervalo de confianza para la proporción de microestablecimientos con página web (P2532)
+cat("\n## Calcular el intervalo de confianza para la proporción de microestablecimientos con página web (P2532)\n")
 pagina_web_valida <- datos_microestablecimientos %>% filter(!is.na(P2532))
-
-# Calcular proporción de establecimientos con página web
 proporcion_pagina_web <- mean(pagina_web_valida$P2532)
-
-# Calcular error estándar para una proporción
 n_pagina_web <- nrow(pagina_web_valida)
 error_estandar_pagina_web <- sqrt(proporcion_pagina_web * (1 - proporcion_pagina_web) / n_pagina_web)
-
-# Calcular el intervalo de confianza (IC) al 95%
 limite_inferior_pagina_web <- proporcion_pagina_web - z_score * error_estandar_pagina_web
 limite_superior_pagina_web <- proporcion_pagina_web + z_score * error_estandar_pagina_web
-
-# Imprimir los resultados
 cat("Intervalo de confianza al 95% para la proporción de establecimientos con página web:\n")
 cat("Proporción:", proporcion_pagina_web, "\n")
 cat("IC:", limite_inferior_pagina_web, "-", limite_superior_pagina_web, "\n")
-```
-## Estimación adicional 1: Proporción de microestablecimientos con acceso a Internet (P2524)
-```{r echo=FALSE, message=FALSE, warning=FALSE}
 
-# Filtrar datos válidos para P2524 (acceso a Internet)
+# Estimación adicional 1: Proporción de microestablecimientos con acceso a Internet (P2524)
+cat("\n## Estimación adicional 1: Proporción de microestablecimientos con acceso a Internet (P2524)\n")
 internet_valido <- datos_microestablecimientos %>% filter(!is.na(P2524))
-
-# Calcular proporción de establecimientos con acceso a Internet
 proporcion_internet <- mean(internet_valido$P2524)
-
-# Calcular error estándar para una proporción
 n_internet <- nrow(internet_valido)
 error_estandar_internet <- sqrt(proporcion_internet * (1 - proporcion_internet) / n_internet)
-
-# Calcular el intervalo de confianza (IC) al 95%
 limite_inferior_internet <- proporcion_internet - z_score * error_estandar_internet
 limite_superior_internet <- proporcion_internet + z_score * error_estandar_internet
-
-# Imprimir los resultados
 cat("Intervalo de confianza al 95% para la proporción de establecimientos con acceso a Internet:\n")
 cat("Proporción:", proporcion_internet, "\n")
 cat("IC:", limite_inferior_internet, "-", limite_superior_internet, "\n")
-```
-## Estimación adicional 2: Promedio de computadores portátiles en uso (P1088)
-```{r echo=FALSE, message=FALSE, warning=FALSE}
 
-# Filtrar datos válidos para P1088 (número de portátiles)
+# Estimación adicional 2: Promedio de computadores portátiles en uso (P1088)
+cat("\n## Estimación adicional 2: Promedio de computadores portátiles en uso (P1088)\n")
 portatiles_validos <- datos_microestablecimientos %>% filter(!is.na(P1088))
-
-# Calcular media, desviación estándar y tamaño de muestra
 media_portatiles <- mean(portatiles_validos$P1088)
 sd_portatiles <- sd(portatiles_validos$P1088)
 n_portatiles <- nrow(portatiles_validos)
-
-# Calcular error estándar
 error_estandar_portatiles <- sd_portatiles / sqrt(n_portatiles)
-
-# Calcular el intervalo de confianza (IC) al 95%
 limite_inferior_portatiles <- media_portatiles - z_score * error_estandar_portatiles
 limite_superior_portatiles <- media_portatiles + z_score * error_estandar_portatiles
-
-# Imprimir los resultados
 cat("Intervalo de confianza al 95% para el número promedio de computadores portátiles:\n")
 cat("Media:", media_portatiles, "\n")
 cat("IC:", limite_inferior_portatiles, "-", limite_superior_portatiles, "\n")
-
 ```
 # Limitaciones u oportunidades.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
