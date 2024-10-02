@@ -52,27 +52,30 @@ El objetivo del análisis estadístico que presentamos en este informe es identi
 # Seleccionar las columnas relevantes, reemplazando P3019 por CDGO_DPRTMNTO
 variables_seleccionadas <- establecimientos[, c("P1010", "P2532", "P1087", "P1088", "P1057", "P1092", "P2524", "P1093", "P1006", "P1764", "P1094", "CDGO_DPRTMNTO")]
 
-# Crear un dataframe con las variables seleccionadas y sus descripciones
-tabla_variables <- data.frame(
+# Crear un dataframe con las descripciones de las variables
+tabla_descripciones <- data.frame(
   "Código DANE" = c("P1010", "P2532", "P1087", "P1088", "P1057", "P1092", "P2524", "P1093", "P1006", "P1764", "P1094", "CDGO_DPRTMNTO"),
   "Descripción" = c(
     "Valor total de ventas o ingresos en los últimos 12 meses",
     "El establecimiento tiene página web",
     "Número de computadores de escritorio en uso",
     "Número de computadores portátiles en uso",
-    "Mes al que corresponde el valor reportado",
+    "Mes de referencia del valor reportado",
     "Dispositivos PDA/DMC en uso en el establecimiento",
-    "Acceso o uso del servicio de Internet en el establecimiento",
+    "Acceso o uso del servicio de Internet",
     "Uso de Internet dentro del establecimiento",
-    "Actividades en las que el establecimiento utiliza Internet",
-    "Formas de pago que acepta el establecimiento",
+    "Actividades en las que se usa Internet",
+    "Formas de pago aceptadas",
     "Uso de Internet fuera del establecimiento",
     "Código de departamento del establecimiento"
   )
 )
 
+# Crear un dataframe separado con los datos reales
+datos_microestablecimientos <- establecimientos[, c("P1010", "P2532", "P1087", "P1088", "P1057", "P1092", "P2524", "P1093", "P1006", "P1764", "P1094", "CDGO_DPRTMNTO")]
+
 # Mostrar la tabla
-print(tabla_variables)
+print(tabla_descripciones)
 
 ```
 # Justificacion de Variables
@@ -107,6 +110,28 @@ A continuación, explicamos cada una y su relevancia en el análisis.
 
 # Análisis descriptivo.
 ```{r echo=FALSE}
+# Convertir la columna P1010 a numérica si no está ya en ese formato
+datos_microestablecimientos$P1010 <- as.numeric(datos_microestablecimientos$P1010)
+
+# Verificar si hay valores NA después de la conversión
+cat("Valores NA en P1010:", sum(is.na(datos_microestablecimientos$P1010)), "\n")
+
+# Calcular la media, mediana, desviación estándar y varianza
+media <- mean(datos_microestablecimientos$P1010, na.rm = TRUE)
+mediana <- median(datos_microestablecimientos$P1010, na.rm = TRUE)
+desviacion_estandar <- sd(datos_microestablecimientos$P1010, na.rm = TRUE)
+varianza <- var(datos_microestablecimientos$P1010, na.rm = TRUE)
+
+# Mostrar los resultados
+cat("Media:", media, "\n")
+cat("Mediana:", mediana, "\n")
+cat("Desviación Estándar:", desviacion_estandar, "\n")
+cat("Varianza:", varianza, "\n")
+
+# Resumen de la variable P1010
+resumen <- summary(datos_microestablecimientos$P1010)
+print(resumen)
+
 ```
 # Distribución del total de ventas o ingresos.
 ```{r echo=FALSE}
@@ -157,110 +182,29 @@ if (nrow(datos_filtrados) > 0) {
 
 # Estimaciones.
 ```{r echo=FALSE}
-# Remover los valores NA para la columna P1010
-ventas <- na.omit(variables_seleccionadas$P1010)
-
-# Cálculo del promedio y desviación estándar
-promedio_ventas <- mean(ventas)
-desviacion_ventas <- sd(ventas)
-
-# Tamaño de la muestra
-n_ventas <- length(ventas)
-
-# Error estándar del promedio
-error_estandar_ventas <- desviacion_ventas / sqrt(n_ventas)
-error_margen_ventas <- qnorm(0.975) * error_estandar_ventas
-
-# Intervalo de confianza
-limite_inferior_ventas <- promedio_ventas - error_margen_ventas
-limite_superior_ventas <- promedio_ventas + error_margen_ventas
-
-# Mostrar el intervalo de confianza
-cat("Intervalo de confianza para el promedio de ventas (95%): [", limite_inferior_ventas, ", ", limite_superior_ventas, "]\n")
-
-print("Proporción de microestablecimientos que cuentan con página web")
-
-# Convertir la columna P2532 a 0 y 1 si no está ya en ese formato
-variables_seleccionadas$P2532 <- as.numeric(variables_seleccionadas$P2532 == 1)
-
-# Remover valores NA para la columna P2532
-pagina_web <- na.omit(variables_seleccionadas$P2532)
-
-# Cálculo de la proporción de establecimientos con página web
-proporcion_web <- mean(pagina_web)
-
-# Tamaño de la muestra
-n_web <- length(pagina_web)
-
-# Comprobar si la proporción es 0 o 1 para evitar errores
-if (proporcion_web == 0) {
-  limite_inferior_web <- 0
-  limite_superior_web <- 0
-} else if (proporcion_web == 1) {
-  limite_inferior_web <- 1
-  limite_superior_web <- 1
-} else {
-  # Error estándar de la proporción
-  error_estandar_web <- sqrt(proporcion_web * (1 - proporcion_web) / n_web)
-  
-  # Intervalo de confianza del 95% para la proporción
-  error_margen_web <- qnorm(0.975) * error_estandar_web
-  
-  # Intervalo de confianza
-  limite_inferior_web <- proporcion_web - error_margen_web
-  limite_superior_web <- proporcion_web + error_margen_web
+# Función para calcular el intervalo de confianza de cualquier variable
+calcular_intervalo_confianza <- function(variable, confianza = 0.95) {
+  datos_limpios <- na.omit(variable)
+  media <- mean(datos_limpios)
+  desviacion <- sd(datos_limpios)
+  n <- length(datos_limpios)
+  error_estandar <- desviacion / sqrt(n)
+  error_margen <- qnorm(0.5 + confianza / 2) * error_estandar
+  limite_inferior <- media - error_margen
+  limite_superior <- media + error_margen
+  return(c(limite_inferior, limite_superior))
 }
 
-# Mostrar el intervalo de confianza
-cat("Intervalo de confianza para la proporción de establecimientos con página web (95%): [", limite_inferior_web, ", ", limite_superior_web, "]\n")
+# Calcular intervalos de confianza
+intervalo_ventas <- calcular_intervalo_confianza(datos_microestablecimientos$P1010)
+intervalo_web <- calcular_intervalo_confianza(datos_microestablecimientos$P2532)
+intervalo_computadores_escritorio <- calcular_intervalo_confianza(datos_microestablecimientos$P1087)
 
+# Mostrar los resultados
+cat("Intervalo de confianza para el promedio de ventas (95%): [", intervalo_ventas[1], ", ", intervalo_ventas[2], "]\n")
+cat("Intervalo de confianza para la proporción de establecimientos con página web (95%): [", intervalo_web[1], ", ", intervalo_web[2], "]\n")
+cat("Intervalo de confianza para el número de computadores de escritorio (95%): [", intervalo_computadores_escritorio[1], ", ", intervalo_computadores_escritorio[2], "]\n")
 
-
-print("Estimación del número de computadores de escritorio")
-
-# Remover valores NA para la columna P1087
-computadores_escritorio <- na.omit(variables_seleccionadas$P1087)
-
-# Cálculo del promedio y desviación estándar
-promedio_computadores_escritorio <- mean(computadores_escritorio)
-desviacion_computadores_escritorio <- sd(computadores_escritorio)
-
-# Tamaño de la muestra
-n_computadores_escritorio <- length(computadores_escritorio)
-
-# Error estándar del promedio
-error_estandar_computadores_escritorio <- desviacion_computadores_escritorio / sqrt(n_computadores_escritorio)
-error_margen_computadores_escritorio <- qnorm(0.975) * error_estandar_computadores_escritorio
-
-# Intervalo de confianza
-limite_inferior_computadores_escritorio <- promedio_computadores_escritorio - error_margen_computadores_escritorio
-limite_superior_computadores_escritorio <- promedio_computadores_escritorio + error_margen_computadores_escritorio
-
-# Mostrar el intervalo de confianza
-cat("Intervalo de confianza para el número de computadores de escritorio (95%): [", limite_inferior_computadores_escritorio, ", ", limite_superior_computadores_escritorio, "]\n")
-
-print("Estimación del número de computadores portátiles")
-
-# Remover valores NA para la columna P1088
-computadores_portatiles <- na.omit(variables_seleccionadas$P1088)
-
-# Cálculo del promedio y desviación estándar
-promedio_computadores_portatiles <- mean(computadores_portatiles)
-desviacion_computadores_portatiles <- sd(computadores_portatiles)
-
-# Tamaño de la muestra
-n_computadores_portatiles <- length(computadores_portatiles)
-
-# Error estándar del promedio
-error_estandar_computadores_portatiles <- desviacion_computadores_portatiles / sqrt(n_computadores_portatiles)
-error_margen_computadores_portatiles <- qnorm(0.975) * error_estandar_computadores_portatiles
-
-# Intervalo de confianza
-limite_inferior_computadores_portatiles <- promedio_computadores_portatiles - error_margen_computadores_portatiles
-limite_superior_computadores_portatiles <- promedio_computadores_portatiles + error_margen_computadores_portatiles
-
-# Mostrar el intervalo de confianza
-cat("Intervalo de confianza para el número de computadores portátiles (95%): [", limite_inferior_computadores_portatiles, ", ", limite_superior_computadores_portatiles, "]\n")
 
 ```
 
