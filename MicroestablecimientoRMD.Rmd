@@ -24,7 +24,22 @@ output:
 
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# Instalar ggplot2 si no está instalado
+if(!require(ggplot2)) install.packages("ggplot2", dependencies=TRUE)
+# Instalar y cargar RColorBrewer si no está instalado
+if (!require(RColorBrewer)) {
+  install.packages("RColorBrewer")
+}
+library(RColorBrewer)
+
+# Instalar y cargar el paquete dplyr si no está instalado
+if (!require(dplyr)) {
+  install.packages("dplyr")
+}
+library(dplyr)
+
 # URL actualizada del archivo en GitHub
 url <- "https://raw.githubusercontent.com/jamadom07683/ModelosEstadisticas_Fase2/refs/heads/main/Microestablecimientos_2016.csv"
 
@@ -109,7 +124,7 @@ A continuación, explicamos cada una y su relevancia en el análisis.
 
 
 # Análisis descriptivo.
-```{r echo=FALSE}
+```{r echo=FALSE,message=FALSE, warning=FALSE}
 # Convertir la columna P1010 a numérica si no está ya en ese formato
 datos_microestablecimientos$P1010 <- as.numeric(datos_microestablecimientos$P1010)
 
@@ -132,9 +147,77 @@ cat("Varianza:", varianza, "\n")
 resumen <- summary(datos_microestablecimientos$P1010)
 print(resumen)
 
+
+# Agrupar por 'P2532' y calcular la media de 'P1010'
+grpie <- variables_seleccionadas %>%
+  group_by(P2532) %>%
+  summarise(media_P1010 = mean(P1010, na.rm=TRUE))
+
+# Extraer etiquetas y tamaños
+labels <- ifelse(grpie$P2532 == 1, "Con Internet", "Sin Internet")
+sizes  <- grpie$media_P1010
+
+
+# Definir la paleta de colores
+color <- brewer.pal(length(sizes), "Set2")
+
+# Crear etiquetas para el gráfico de pastel
+pie_labels <- paste0(labels, " - ", round(100 * sizes/sum(sizes), 2), "%")
+
+# Crear gráfico de pastel
+pie(sizes, labels = pie_labels, col = color, main = "Distribución de Ventas Promedio por Presencia de Internet")
+
+# Añadir leyenda
+legend("topleft", legend = labels, fill = color)
+
+
+# Filtrar datos válidos para la variable P2532 (Página web)
+datos_validos_pagina_web <- datos_microestablecimientos$P2532[!is.na(datos_microestablecimientos$P2532) & is.finite(datos_microestablecimientos$P2532)]
+
+# Gráfico de barras para la variable página web (P2532)
+if (length(datos_validos_pagina_web) > 0) {
+  barplot(table(datos_validos_pagina_web), 
+          main = "Proporción de Establecimientos con Página Web (P2532)", 
+          col = c("red", "green"), 
+          names.arg = c("No", "Sí"))
+} else {
+  cat("No hay datos válidos para la variable P2532")
+}
+
+# Filtrar datos válidos para la variable P1764 (Formas de pago)
+datos_validos_formas_pago <- datos_microestablecimientos$P1764[!is.na(datos_microestablecimientos$P1764) & is.finite(datos_microestablecimientos$P1764)]
+
+# Histograma para el número de computadores de escritorio (P1087)
+hist(datos_microestablecimientos$P1087, 
+     main = "Distribución del Número de Computadores de Escritorio (P1087)", 
+     xlab = "Computadores de Escritorio", 
+     col = "lightblue", 
+     breaks = 20)
+
+# Histograma para el número de computadores portátiles (P1088)
+hist(datos_microestablecimientos$P1088, 
+     main = "Distribución del Número de Computadores Portátiles (P1088)", 
+     xlab = "Computadores Portátiles", 
+     col = "lightcoral", 
+     breaks = 20)
+
+# Convertir P2532 a factor con etiquetas "No" y "Sí"
+variables_seleccionadas$P2532 <- factor(variables_seleccionadas$P2532, levels = c(0, 1), labels = c("No", "Sí"))
+
+# Gráfico de barras para la variable P2532 con ggplot2
+ggplot(variables_seleccionadas, aes(x = P2532)) +
+  geom_bar(fill = "green", color = "black") +
+  labs(title = "Presencia de Página Web en los Establecimientos",
+       x = "Tiene Página Web",
+       y = "Frecuencia") +
+  theme_minimal() 
+
 ```
+
 # Distribución del total de ventas o ingresos.
+
 ```{r echo=FALSE}
+
 # Definir la función para graficar la distribución
 graficar_distribucion <- function(datos, titulo) {
   # Crear el histograma
