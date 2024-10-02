@@ -3,9 +3,9 @@ title: "Encuesta microestablecimientos 2016"
 author: 
 - David Moreno, Santiago Amado, Yodid Cardenas
 
- - Maestría en Ciencia de Datos
+- Maestría en Ciencia de Datos
 
- - Modelos Estadísticos Aplicados
+- Modelos Estadísticos Aplicados
 date: ""
 output:
   html_document:
