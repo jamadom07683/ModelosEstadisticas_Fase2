@@ -207,6 +207,9 @@ ggplot(variables_seleccionadas, aes(x = factor(P2524))) +
        y = "Frecuencia") +
   scale_x_discrete(labels = c("1" = "Sí", "2" = "No"))
 
+#Analisis en el texto
+cat("Podemos observar que las empresa que no tienen internet son muchas más comparadas con aquellas que si tiene.  Aún así, de acuerdo a las figuras de torta anteriores son empresas con  un mayor volumen de ventas comparativamente hablando.")
+
 # Filtrar datos válidos para la variable P2532 (Página web)
 datos_validos_pagina_web <- datos_microestablecimientos$P2532[!is.na(datos_microestablecimientos$P2532) & is.finite(datos_microestablecimientos$P2532)]
 
@@ -245,7 +248,6 @@ variables_seleccionadas$P2532 <- factor(variables_seleccionadas$P2532, levels = 
 # Distribución del total de ventas o ingresos.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-
 
 ```
 
