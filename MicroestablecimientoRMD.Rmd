@@ -147,29 +147,65 @@ cat("Varianza:", varianza, "\n")
 resumen <- summary(datos_microestablecimientos$P1010)
 print(resumen)
 
-
-# Agrupar por 'P2532' y calcular la media de 'P1010'
+# Agrupar por 'P2532' (página web) y calcular la media de 'P1010'
 grpie <- variables_seleccionadas %>%
   group_by(P2532) %>%
-  summarise(media_P1010 = mean(P1010, na.rm=TRUE))
+  summarise(media_P1010 = mean(P1010, na.rm=TRUE)) 
 
 # Extraer etiquetas y tamaños
-labels <- ifelse(grpie$P2532 == 1, "Con Internet", "Sin Internet")
+labels <- grpie$P2532
 sizes  <- grpie$media_P1010
 
-
-# Definir la paleta de colores
+# Crear una paleta de colores
+library(RColorBrewer)
 color <- brewer.pal(length(sizes), "Set2")
 
-# Crear etiquetas para el gráfico de pastel
-pie_labels <- paste0(labels, " - ", round(100 * sizes/sum(sizes), 2), "%")
-
-# Crear gráfico de pastel
-pie(sizes, labels = pie_labels, col = color, main = "Distribución de Ventas Promedio por Presencia de Internet")
+# Crear etiquetas para el gráfico
+pie_labels <- paste0(round(100 * sizes/sum(sizes), 2), "%")
+pie(sizes, labels = pie_labels, col = color)
 
 # Añadir leyenda
-legend("topleft", legend = labels, fill = color)
+legend("topright", legend = c("Con Página Web", "Sin Página Web"),
+       fill =  c("#66C2A5", "#FC8D62"))
 
+# Análisis en el texto
+cat("Ventas medias en porcentajes relevantes a la variable *cuenta o no con página web* en la empresa. 
+Este pie muestra que aquellas empresas que tienen página web tienen ventas medias mayores. Esto no implica que el internet sea de por sí la variable que impacte el desempeño de estas empresas. Es posible que estas empresas tengan más recursos para poder invertir en tecnología.")
+
+# Agrupar por 'P2524' (uso de internet) y calcular la media de 'P1010'
+grpie <- variables_seleccionadas %>%
+  group_by(P2524) %>%
+  summarise(media_P1010 = mean(P1010, na.rm=TRUE)) 
+
+# Extraer etiquetas y tamaños
+labels <- grpie$P2524
+sizes  <- grpie$media_P1010
+
+# Crear una paleta de colores
+library(RColorBrewer)
+color <- brewer.pal(length(sizes), "Set2")
+
+# Crear etiquetas para el gráfico
+pie_labels <- paste0(round(100 * sizes/sum(sizes), 2), "%")
+pie(sizes, labels = pie_labels, col = color)
+
+# Añadir leyenda
+legend("topright", legend = c("Internet Sí", "Internet No"),
+       fill =  c("#66C2A5", "#FC8D62"))
+
+# Análisis en el texto
+cat("Ventas medias en porcentajes relevantes a la variable *tiene o no internet* en la empresa. 
+Este pie muestra que aquellas empresas que cuentan con internet tienen mayores ventas promedio que las que no. Comparada esta gráfica con la anterior, vemos que el tener internet en la empresa, con respecto a si tienen o no página web, 
+presenta un incremento de más de un punto porcentual, i.e. de 70.16% a 71.78%. Esto indica que efectivamente puede ser más importante 
+tener internet que contar con página web. Sin embargo, hay una gran diferencia con aquellas empresas que no tienen ni internet ni página web.")
+
+# Gráfico de barras para la variable P2524 (Presencia de Internet en los Establecimientos)
+ggplot(variables_seleccionadas, aes(x = factor(P2524))) +
+  geom_bar(fill = "orange", color = "black") +
+  labs(title = "Presencia de Internet en los Establecimientos",
+       x = "Internet",
+       y = "Frecuencia") +
+  scale_x_discrete(labels = c("1" = "Sí", "2" = "No"))
 
 # Filtrar datos válidos para la variable P2532 (Página web)
 datos_validos_pagina_web <- datos_microestablecimientos$P2532[!is.na(datos_microestablecimientos$P2532) & is.finite(datos_microestablecimientos$P2532)]
@@ -204,89 +240,11 @@ hist(datos_microestablecimientos$P1088,
 # Convertir P2532 a factor con etiquetas "No" y "Sí"
 variables_seleccionadas$P2532 <- factor(variables_seleccionadas$P2532, levels = c(0, 1), labels = c("No", "Sí"))
 
-# Gráfico de barras para la variable P2532 con ggplot2
-ggplot(variables_seleccionadas, aes(x = P2532)) +
-  geom_bar(fill = "green", color = "black") +
-  labs(title = "Presencia de Página Web en los Establecimientos",
-       x = "Tiene Página Web",
-       y = "Frecuencia") +
-  theme_minimal() 
-
 ```
 
 # Distribución del total de ventas o ingresos.
 
-```{r echo=FALSE}
-
-# Definir la función para graficar la distribución
-graficar_distribucion <- function(datos, titulo) {
-  # Crear el histograma
-  hist(datos$P1010, prob = TRUE, main = titulo, xlab = "Ventas o ingresos", col = "lightblue", breaks = 30)
-  
-  # Añadir la curva de densidad
-  lines(density(datos$P1010, na.rm = TRUE), col = "red", lwd = 2)
-  
-  # Añadir la curva de distribución normal
-  media <- mean(datos$P1010, na.rm = TRUE)
-  sd <- sd(datos$P1010, na.rm = TRUE)
-  curve(dnorm(x, mean = media, sd = sd), add = TRUE, col = "blue", lwd = 2)
-}
-
-# Filtrar los datos para ventas menores a 100 millones
-datos_filtrados <- variables_seleccionadas[variables_seleccionadas$P1010 < 100000000, ]
-
-# Verificar si los datos filtrados tienen alguna fila
-if (nrow(datos_filtrados) > 0) {
-  
-  # Filtrar los que NO tienen página web
-  sin_web <- datos_filtrados[datos_filtrados$P2532 == 0, ]
-  
-  # Filtrar los que SÍ tienen página web
-  con_web <- datos_filtrados[datos_filtrados$P2532 == 1, ]
-  
-  # Verificar si el subconjunto sin_web tiene datos y no está vacío
-  if (nrow(sin_web) > 0 && sum(!is.na(sin_web$P1010)) > 0) {
-    graficar_distribucion(sin_web, "Distribución de Ventas (Sin Página Web)")
-  } else {
-    print("No hay datos suficientes para los establecimientos sin página web.")
-  }
-  
-  # Verificar si el subconjunto con_web tiene datos y no está vacío
-  if (nrow(con_web) > 0 && sum(!is.na(con_web$P1010)) > 0) {
-    graficar_distribucion(con_web, "Distribución de Ventas (Con Página Web)")
-  } else {
-    print("No hay datos suficientes para los establecimientos con página web.")
-  }
-  
-} else {
-  print("No hay datos suficientes después del filtrado.")
-}
-```
-
-# Estimaciones.
-```{r echo=FALSE}
-# Función para calcular el intervalo de confianza de cualquier variable
-calcular_intervalo_confianza <- function(variable, confianza = 0.95) {
-  datos_limpios <- na.omit(variable)
-  media <- mean(datos_limpios)
-  desviacion <- sd(datos_limpios)
-  n <- length(datos_limpios)
-  error_estandar <- desviacion / sqrt(n)
-  error_margen <- qnorm(0.5 + confianza / 2) * error_estandar
-  limite_inferior <- media - error_margen
-  limite_superior <- media + error_margen
-  return(c(limite_inferior, limite_superior))
-}
-
-# Calcular intervalos de confianza
-intervalo_ventas <- calcular_intervalo_confianza(datos_microestablecimientos$P1010)
-intervalo_web <- calcular_intervalo_confianza(datos_microestablecimientos$P2532)
-intervalo_computadores_escritorio <- calcular_intervalo_confianza(datos_microestablecimientos$P1087)
-
-# Mostrar los resultados
-cat("Intervalo de confianza para el promedio de ventas (95%): [", intervalo_ventas[1], ", ", intervalo_ventas[2], "]\n")
-cat("Intervalo de confianza para la proporción de establecimientos con página web (95%): [", intervalo_web[1], ", ", intervalo_web[2], "]\n")
-cat("Intervalo de confianza para el número de computadores de escritorio (95%): [", intervalo_computadores_escritorio[1], ", ", intervalo_computadores_escritorio[2], "]\n")
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 
 ```
