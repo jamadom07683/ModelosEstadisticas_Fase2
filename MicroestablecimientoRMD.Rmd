@@ -402,7 +402,5 @@ Esto ayudaría a entender mejor cómo la modernización tecnológica impacta en 
 ```
 
 # Referencias.
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-cat("Los datos utilizados para este análisis fueron obtenidos de la base de datos de microestablecimientos del DANE (2016). 
+Los datos utilizados para este análisis fueron obtenidos de la base de datos de microestablecimientos del DANE (2016). 
 Más información puede ser consultada en: https://microdatos.dane.gov.co/index.php/catalog/560/data-dictionary/F10?file_name=Microestablecimientos_2016.\n")
-```
