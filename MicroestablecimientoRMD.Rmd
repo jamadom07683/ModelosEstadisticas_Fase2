@@ -248,6 +248,45 @@ variables_seleccionadas$P2532 <- factor(variables_seleccionadas$P2532, levels = 
 # Distribución del total de ventas o ingresos.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Filtrar los datos para los establecimientos que no tienen página web (P2532 == 2) y ventas menores a $100,000,000
+sin_pagina_web <- datos_microestablecimientos %>%
+  filter(P1010 < 100000000 & P2532 == 2 & !is.na(P1010))
+
+# Filtrar los datos para los establecimientos que sí tienen página web (P2532 == 1) y ventas menores a $100,000,000
+con_pagina_web <- datos_microestablecimientos %>%
+  filter(P1010 < 100000000 & P2532 == 1 & !is.na(P1010))
+
+# Gráfico para los establecimientos sin página web
+ggplot(sin_pagina_web, aes(x = P1010)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "skyblue", color = "black") +
+  geom_density(color = "red", size = 1.5) +
+  stat_function(fun = dnorm, args = list(mean = mean(sin_pagina_web$P1010, na.rm = TRUE), 
+                                         sd = sd(sin_pagina_web$P1010, na.rm = TRUE)), color = "blue", size = 1) +
+  labs(title = "Distribución del Total de Ventas (P1010) - Sin Página Web", 
+       x = "Ventas (P1010)", 
+       y = "Densidad") +
+  theme_minimal()
+
+# Gráfico para los establecimientos con página web
+ggplot(con_pagina_web, aes(x = P1010)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "skyblue", color = "black") +
+  geom_density(color = "red", size = 1.5) +
+  stat_function(fun = dnorm, args = list(mean = mean(con_pagina_web$P1010, na.rm = TRUE), 
+                                         sd = sd(con_pagina_web$P1010, na.rm = TRUE)), color = "blue", size = 1) +
+  labs(title = "Distribución del Total de Ventas (P1010) - Con Página Web", 
+       x = "Ventas (P1010)", 
+       y = "Densidad") +
+  theme_minimal()
+
+# Calcular la media y desviación estándar de todos los establecimientos
+media_ventas_total <- mean(datos_microestablecimientos$P1010, na.rm = TRUE)
+sd_ventas_total <- sd(datos_microestablecimientos$P1010, na.rm = TRUE)
+
+# Calcular la probabilidad de que las ventas superen los $100,000,000
+probabilidad_mas_100m <- 1 - pnorm(100000000, mean = media_ventas_total, sd = sd_ventas_total)
+
+# Imprimir la probabilidad
+cat("La probabilidad de que un microestablecimiento registre ventas superiores a $100,000,000 es:", probabilidad_mas_100m, "\n")
 
 ```
 
